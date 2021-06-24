@@ -18,3 +18,9 @@ docker network connect mywebapp-network myPostgres
 docker network inspect mywebapp-network: inspecting which cantainer is connecting to this network
 
 ````
+
+**On Delete No Action** 
+
+Order keeps the FK that references to Client; as Cascade = default, i.e. {}, then SQL shows ON DELETE NO ACTION. 
+
+![image](https://user-images.githubusercontent.com/17804600/123317968-f88af400-d52e-11eb-8187-18838c87e2c9.png)
