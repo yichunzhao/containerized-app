@@ -90,7 +90,7 @@
                     <url>jdbc:postgresql://localhost:5435/postgres</url>
                     <user>postgres</user>
                     <password>test</password>
-                    <schems>public</schems>
+                    <schemas>public</schemas>
                 </configuration>
             </plugin>
 

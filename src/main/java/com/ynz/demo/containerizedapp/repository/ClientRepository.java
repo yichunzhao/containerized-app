@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ClientRepository extends CrudRepository<Client, Integer> {
@@ -15,6 +16,7 @@ public interface ClientRepository extends CrudRepository<Client, Integer> {
     @Query("SELECT o from Client c JOIN c.orders o WHERE c.email = :email")
     List<Order> findClientOrdersByEmail(@Param("email") String email);
 
-    Client findByEmail(String email);
+
+    Optional<Client> findByEmail(String email);
 
 }
