@@ -3,9 +3,10 @@ package com.ynz.demo.containerizedapp.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -20,7 +21,9 @@ public class Order {
     @GeneratedValue
     private int id;
 
-    @NotNull
+    @Column(updatable = false, nullable = false)
+    @ColumnDefault("gen_random_uuid()")
+    @Type(type = "uuid-char")
     private UUID businessId;
 
     @Column(name = "creationDateTimeWithZone", columnDefinition = "TIME WITH TIME ZONE")

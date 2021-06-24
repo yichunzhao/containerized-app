@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,7 +20,12 @@ public class Client {
     @GeneratedValue
     private int id;
 
+    @Column(nullable = false)
     private String name;
+
+    @Email
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @OneToMany(mappedBy = "client", targetEntity = Order.class)
     private Set<Order> orders = new HashSet<>();
