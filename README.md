@@ -83,4 +83,19 @@ We can list two entities in the FROM clause without specifying join condition, m
   "SELECT d FROM Employee e, Department d"
 ````
 
+**Join Fetch**
+Join fetch is used to fetch lazy-loaded derivatives eagerly for the current query. 
 
+````
+ "SELECT d FROM Department d JOIN FETCH d.employees",
+ ````
+ 
+ Although this query looks very similar to other queries, there is one difference, and that is that the Employees are eagerly loaded. That means that once we call getResultList in the test above, the Department entities will have their employees field loaded, thus saving us another trip to the database.
+
+But be aware of the memory trade-off. We may be more efficient because we only performed one query, but we also loaded all Departments and their employees into memory at once.
+
+We can also perform the outer fetch join in a similar way to outer joins, where we collect records from the left entity that don't match the join condition. And additionally, it eagerly loads the specified association:
+
+````
+"SELECT d FROM Department d LEFT JOIN FETCH d.employees"
+````
