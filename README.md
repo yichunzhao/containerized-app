@@ -99,3 +99,4 @@ We can also perform the outer fetch join in a similar way to outer joins, where 
 ````
 "SELECT d FROM Department d LEFT JOIN FETCH d.employees"
 ````
+The JOIN FETCH expression is not a regular JOIN and it does not define a JOIN variable. Its only purpose is specifying related objects that should be fetched from the database with the query results on the same round trip. It tells that underlying 
