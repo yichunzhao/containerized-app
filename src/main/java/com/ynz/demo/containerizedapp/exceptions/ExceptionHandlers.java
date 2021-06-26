@@ -15,4 +15,10 @@ public class ExceptionHandlers extends ResponseEntityExceptionHandler {
         return new ResponseEntity(apiError, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<ApiError> handleDuplicatedClientException(DuplicatedClientException e) {
+        ApiError apiError = new ApiError(HttpStatus.CONFLICT, e.getMessage(), "Duplicated Client error");
+        return new ResponseEntity(apiError, HttpStatus.CONFLICT);
+    }
+
 }

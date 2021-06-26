@@ -16,6 +16,9 @@ public class ClientDto {
     @NotBlank
     private String email;
 
+    public ClientDto(){
+    }
+
     public ClientDto(Client client) {
         this.name = client.getName();
         this.email = client.getEmail();
