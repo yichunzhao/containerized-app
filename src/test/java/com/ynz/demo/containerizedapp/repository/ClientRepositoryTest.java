@@ -2,7 +2,6 @@ package com.ynz.demo.containerizedapp.repository;
 
 import com.ynz.demo.containerizedapp.domain.Client;
 import com.ynz.demo.containerizedapp.domain.Order;
-import com.ynz.demo.containerizedapp.exceptions.ClientNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -11,7 +10,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -72,6 +73,33 @@ class ClientRepositoryTest {
 
         assertNotNull(order1_);
         assertNotNull(order2_);
+    }
+
+    @Test
+    void givenOrderBusinessId_FindWhichClientOwnIt() {
+        //given orderId1 = 2
+        int orderId1 = 2;
+
+        //find Order's businessId
+        Order order = testEntityManager.find(Order.class, orderId1);
+        assertNotNull(order);
+        UUID orderBusinessId = order.getBusinessId();
+
+        //find client by orderBusinessId
+        Optional<Client> foundClient = clientRepository.findClientByOrderBusinessId(orderBusinessId);
+        assertTrue(foundClient.isPresent());
+
+        Client client = foundClient.get();
+        assertThat(client.getName(), is("ynz"));
+    }
+
+    @Test
+    void ifGivenOrderNotExisted_ThenGetNullClient() {
+        UUID orderBusinessId = UUID.randomUUID();
+
+        //find client by orderBusinessId
+        Optional<Client> foundClient = clientRepository.findClientByOrderBusinessId(orderBusinessId);
+        assertFalse(foundClient.isPresent());
     }
 
 }
