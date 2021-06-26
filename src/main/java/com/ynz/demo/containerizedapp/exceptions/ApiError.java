@@ -1,5 +1,6 @@
 package com.ynz.demo.containerizedapp.exceptions;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 import java.time.OffsetDateTime;
@@ -12,6 +13,7 @@ import java.util.List;
  * error – List of constructed error messages
  */
 
+@Getter
 public class ApiError {
     private HttpStatus status;
     private String message;

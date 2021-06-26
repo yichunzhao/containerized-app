@@ -9,16 +9,16 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ExceptionHandlers extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler
+    @ExceptionHandler(ClientNotFoundException.class)
     public ResponseEntity<ApiError> handleClientNotFoundException(ClientNotFoundException e) {
         ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, e.getMessage(), "Client not found error");
-        return new ResponseEntity(apiError, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(DuplicatedClientException.class)
     public ResponseEntity<ApiError> handleDuplicatedClientException(DuplicatedClientException e) {
         ApiError apiError = new ApiError(HttpStatus.CONFLICT, e.getMessage(), "Duplicated Client error");
-        return new ResponseEntity(apiError, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
     }
 
 }
