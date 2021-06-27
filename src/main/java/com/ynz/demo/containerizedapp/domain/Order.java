@@ -3,12 +3,15 @@ package com.ynz.demo.containerizedapp.domain;
 import com.ynz.demo.containerizedapp.shared.OrderStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -22,7 +25,7 @@ public class Order {
     @GeneratedValue
     private int id;
 
-    @Column(updatable = false, nullable = false)
+    @Column(updatable = false)
     @ColumnDefault("gen_random_uuid()")
     @Type(type = "uuid-char")
     private UUID businessId;
@@ -36,6 +39,14 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "FK_ClientId")
     private Client client;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    private Set<OrderItem> orderItems = new HashSet<>();
+
+    public void add(@NonNull OrderItem orderItem){
+        orderItem.setOrder(this);
+        this.orderItems.add(orderItem);
+    }
 
     @Override
     public boolean equals(Object o) {

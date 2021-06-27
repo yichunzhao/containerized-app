@@ -8,15 +8,15 @@ import com.ynz.demo.containerizedapp.dto.OrderDto;
 import com.ynz.demo.containerizedapp.exceptions.ClientNotFoundException;
 import com.ynz.demo.containerizedapp.exceptions.DuplicatedClientException;
 import com.ynz.demo.containerizedapp.repository.ClientRepository;
+import com.ynz.demo.containerizedapp.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.validation.constraints.Email;
 
 @Service
 @RequiredArgsConstructor
 public class ClientService {
     private final ClientRepository clientRepository;
+    private final OrderRepository orderRepository;
 
     public ClientDto createNewClient(ClientDto clientDto) {
         try {
@@ -33,7 +33,7 @@ public class ClientService {
         throw new DuplicatedClientException("User: " + clientDto.getEmail() + " already existed...");
     }
 
-    public ClientDto addClientOrder(@Email String clientEmail, OrderDto orderDto) {
+    public ClientDto addClientOrder(String clientEmail, OrderDto orderDto) {
         ClientInfo clientInfo = findClientByEmail(clientEmail);
 
         Client client = new Client();
@@ -48,7 +48,7 @@ public class ClientService {
         return new ClientDto(persisted);
     }
 
-    public ClientInfo findClientByEmail(@Email String clientEmail) {
+    public ClientInfo findClientByEmail(String clientEmail) {
         return clientRepository.findByEmail(clientEmail)
                 .orElseThrow(() -> new ClientNotFoundException("User:  " + clientEmail + " is not found..."));
     }
