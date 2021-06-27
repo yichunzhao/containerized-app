@@ -100,3 +100,22 @@ We can also perform the outer fetch join in a similar way to outer joins, where 
 "SELECT d FROM Department d LEFT JOIN FETCH d.employees"
 ````
 The JOIN FETCH expression is not a regular JOIN and it does not define a JOIN variable. Its only purpose is specifying related objects that should be fetched from the database with the query results on the same round trip. It tells that underlying 
+
+
+**About OffSetDateTime and PostgreSQL**
+When saving a offSetDateTime value into PostgreSQL database, the time offset will be transalated into the time that PostgreSQL is configured, which is normally is normally the time-zone of the host that is running the Postgres. If populating the following DateTime with TimeZone
+````
+insert into Client_orders(id, creation_date_time_with_zone, order_status, FK_Client_Id) values(2, '1999-01-08 14:05:06-08', 'SUSPENDING',1);
+
+````
+Then it will be mapped into the PostgreSQL database as  ``1999-01-08 23:05:06+01``, inline with the database time-zone (+1:00)
+
+**About JPA translating OffSetDateTimet into Database**
+
+The columnDefinition tells the Hibernate that please translate Java 8 OffsetDateTime into a cell in the db a timeStamp with a time-zone. Literally, "TIMESTAMP" indicates the time stamp formate, i.e. including date and time; "WITH TIME ZONE" tells that date-time followed by a time-zone delimited by '+' or '-'.
+
+````
+    @Column(name = "creationDateTimeWithZone", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private OffsetDateTime createdAt;
+````
+
