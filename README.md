@@ -125,3 +125,11 @@ if writting columeDifination in another way:
     private OffsetDateTime createdAt;
 ````
 in the database, supprise, I found only time followed by time-zone.
+
+**Paring OffsetDateTime in Java**
+
+It is critical to know Date and Time are separated by 'T', and time-zone starts with '+' or '-'; otherwise it leads to parsing error. 
+
+````
+        OffsetDateTime expectedTimeStamp = OffsetDateTime.parse("1999-01-08T14:05:06+01");
+````
