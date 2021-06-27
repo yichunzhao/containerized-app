@@ -119,3 +119,67 @@ The columnDefinition tells the Hibernate that please translate Java 8 OffsetDate
     private OffsetDateTime createdAt;
 ````
 
+if writting columeDifination in another way:
+````
+    @Column(name = "creationDateTimeWithZone", columnDefinition = "TIMES WITH TIME ZONE")
+    private OffsetDateTime createdAt;
+````
+in the database, supprise, I found only time followed by time-zone.
+
+**Parsing OffsetDateTime in Java**
+
+Date and Time are separated by 'T', and time-zone starts with '+' or '-'; otherwise it leads to parsing error. 
+
+````
+        OffsetDateTime expectedTimeStamp = OffsetDateTime.parse("1999-01-08T14:05:06+01");
+````
+
+**About Spring-JPA Projections**
+
+Using entity-based projections that project 
+
+Interface-based projections:
+
+Nullable Wrappers
+Getters in projection interfaces can make use of nullable wrappers for improved null-safety. Currently supported wrapper types are:
+
+java.util.Optional
+
+com.google.common.base.Optional
+
+scala.Option
+
+io.vavr.control.Option
+
+Class-based projections (DTOs)
+
+Another way of defining projections is by using value type DTOs (Data Transfer Objects) that hold properties for the fields that are supposed to be retrieved. These DTO types can be used in exactly the same way projection interfaces are used, except that no proxying happens and no nested projections can be applied.
+
+If the store optimizes the query execution by limiting the fields to be loaded, the fields to be loaded are determined from the parameter names of the constructor that is exposed.
+
+so paratmeer name within a dto constructor decide what attributes are retreived from the aggregate root. 
+
+Using Lombok @Value annotation can dramatically simplify the code for creating a DTO. 
+
+
+
+
+Spring JPA Projection may optimize the SQL query according to queried parameters. The follow case demonstrates that the client is not eagerly loaded, for the target paramters are limited to the attributes belonging to the Order.     
+
+````
+public interface OrderRepository extends CrudRepository<Order, Integer> {
+
+    OrderInfo findByBusinessId(UUID businessId);
+}
+
+Hibernate: select order0_.business_id as col_0_0_, order0_.creation_date_time_with_zone as col_1_0_, order0_.order_status as col_2_0_ from client_orders order0_ where order0_.business_id=?
+````
+In another case, if using an entity projection, then Hibernate generates an left outer join with Client, so a projection may improve the performance. 
+
+````
+Hibernate: select order0_.id as id1_1_0_, order0_.business_id as business2_1_0_, order0_.fk_client_id as fk_clien5_1_0_, order0_.creation_date_time_with_zone as creation3_1_0_, order0_.order_status as order_st4_1_0_, client1_.id as id1_0_1_, client1_.email as email2_0_1_, client1_.name as name3_0_1_ from client_orders order0_ left outer join client client1_ on order0_.fk_client_id=client1_.id where order0_.id=?
+````
+
+**About One-Many and Many-One default fetcg tpes**
+
+@OneToMany fetch model default to lazy-loading; however, @ManyToOne default fetch model default to eager-loading
