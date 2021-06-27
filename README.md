@@ -181,5 +181,5 @@ Hibernate: select order0_.id as id1_1_0_, order0_.business_id as business2_1_0_,
 ````
 
 **About One-Many and Many-One default fetcg tpes**
-@OneToMany fetch model default to lazy-loading; however,
-@ManyToOne default fetch model default to eager-loading
+
+@OneToMany fetch model default to lazy-loading; however, @ManyToOne default fetch model default to eager-loading
