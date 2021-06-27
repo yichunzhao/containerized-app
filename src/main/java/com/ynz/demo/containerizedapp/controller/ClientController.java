@@ -19,7 +19,7 @@ public class ClientController {
     private final ClientService clientService;
 
     @PostMapping
-    public ResponseEntity<?> createNewClient(@Validated @RequestBody ClientDto clientDto, HttpServletRequest request) {
+    public ResponseEntity<ClientDto> createNewClient(@Validated @RequestBody ClientDto clientDto, HttpServletRequest request) {
         ClientDto created = clientService.createNewClient(clientDto);
         URI uri = ServletUriComponentsBuilder.fromRequestUri(request).pathSegment("{email}").buildAndExpand(created.getEmail()).encode().toUri();
 

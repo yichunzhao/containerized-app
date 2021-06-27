@@ -1,5 +1,6 @@
 package com.ynz.demo.containerizedapp.domain;
 
+import com.ynz.demo.containerizedapp.shared.OrderStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,8 +27,11 @@ public class Order {
     @Type(type = "uuid-char")
     private UUID businessId;
 
-    @Column(name = "creationDateTimeWithZone", columnDefinition = "TIME WITH TIME ZONE")
+    @Column(name = "creationDateTimeWithZone", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime createdAt;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @ManyToOne
     @JoinColumn(name = "FK_ClientId")

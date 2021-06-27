@@ -4,6 +4,7 @@ import com.ynz.demo.containerizedapp.domain.Client;
 import com.ynz.demo.containerizedapp.domain.Order;
 import com.ynz.demo.containerizedapp.dto.ClientDto;
 import com.ynz.demo.containerizedapp.dto.ClientInfo;
+import com.ynz.demo.containerizedapp.dto.OrderDto;
 import com.ynz.demo.containerizedapp.exceptions.ClientNotFoundException;
 import com.ynz.demo.containerizedapp.exceptions.DuplicatedClientException;
 import com.ynz.demo.containerizedapp.repository.ClientRepository;
@@ -32,18 +33,22 @@ public class ClientService {
         throw new DuplicatedClientException("User: " + clientDto.getEmail() + " already existed...");
     }
 
-    public Client addClientOrder(@Email String clientEmail, Order order) throws ClientNotFoundException {
+    public ClientDto addClientOrder(@Email String clientEmail, OrderDto orderDto) {
         ClientInfo clientInfo = findClientByEmail(clientEmail);
 
         Client client = new Client();
         client.setEmail(clientInfo.getEmail());
         client.setName(clientInfo.getName());
-        client.addOrder(order);
 
-        return clientRepository.save(client);
+        Order newOrder = new Order();
+        newOrder.setOrderStatus(orderDto.getOrderStatus());
+
+        Client persisted = clientRepository.save(client);
+
+        return new ClientDto(persisted);
     }
 
-    public ClientInfo findClientByEmail(@Email String clientEmail) throws ClientNotFoundException {
+    public ClientInfo findClientByEmail(@Email String clientEmail) {
         return clientRepository.findByEmail(clientEmail)
                 .orElseThrow(() -> new ClientNotFoundException("User:  " + clientEmail + " is not found..."));
     }
