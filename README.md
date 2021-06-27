@@ -119,3 +119,9 @@ The columnDefinition tells the Hibernate that please translate Java 8 OffsetDate
     private OffsetDateTime createdAt;
 ````
 
+if writting columeDifination in another way:
+````
+    @Column(name = "creationDateTimeWithZone", columnDefinition = "TIMES WITH TIME ZONE")
+    private OffsetDateTime createdAt;
+````
+in the database, supprise, I found only time followed by time-zone.
