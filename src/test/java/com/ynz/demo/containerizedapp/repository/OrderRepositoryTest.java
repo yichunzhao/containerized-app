@@ -6,6 +6,7 @@ import com.ynz.demo.containerizedapp.domain.OrderItem;
 import com.ynz.demo.containerizedapp.dto.OrderInfo;
 import com.ynz.demo.containerizedapp.shared.OrderStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -18,8 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -61,11 +61,14 @@ class OrderRepositoryTest {
 
     @Test
     void whenSavingOrderHavingOrderItem_ThenOrderItemCascadeOnPersist() {
+        log.info("saving only non-null attributes");
         OrderItem item = new OrderItem();
         item.setProductName("iphone11");
         item.setAmount(1);
 
+        //order businessIs is null at this moment
         Order order = new Order();
+        order.setCreatedAt(OffsetDateTime.now());
         order.setOrderStatus(OrderStatus.SUSPENDING);
         order.add(item);
 
@@ -75,6 +78,35 @@ class OrderRepositoryTest {
 
         Order found = testEntityManager.find(Order.class, id);
         assertThat(found.getOrderItems(), hasSize(1));
+    }
+
+    @Test
+    @DisplayName("within a transaction, accessing lazy loading elements")
+    void whenFindOrderById2_Return2Items() {
+        log.info("find order by id=2");
+        Optional<Order> ordersOptional = orderRepository.findById(2);
+
+        log.info("is order present?");
+        assertTrue(ordersOptional.isPresent());
+
+        log.info("has order two orderItems? trigger lazy loading here.");
+        assertThat(ordersOptional.get().getOrderItems(), hasSize(2));
+    }
+
+    @Test
+    void checkOrderItemsIsPopulated() {
+        OrderItem orderItem1 = testEntityManager.find(OrderItem.class, 5);
+        OrderItem orderItem2 = testEntityManager.find(OrderItem.class, 6);
+        OrderItem orderItem3 = testEntityManager.find(OrderItem.class, 7);
+        assertNotNull(orderItem1);
+        assertNotNull(orderItem2);
+        assertNotNull(orderItem3);
+        assertThat(orderItem1.getProductName(), is("iphone11"));
+        assertThat(orderItem2.getProductName(), is("Logitech MK270"));
+        assertThat(orderItem3.getProductName(), is("B&O HeadPhone"));
+        assertThat(orderItem1.getOrder(), is(notNullValue()));
+        assertThat(orderItem2.getOrder(), is(notNullValue()));
+        assertThat(orderItem3.getOrder(), is(notNullValue()));
     }
 
 }

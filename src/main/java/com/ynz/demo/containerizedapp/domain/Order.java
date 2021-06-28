@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -19,13 +20,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
+@DynamicInsert
 public class Order {
 
     @Id
     @GeneratedValue
     private int id;
 
-    @Column(updatable = false)
+    //@Column(updatable = false, nullable = false)
     @ColumnDefault("gen_random_uuid()")
     @Type(type = "uuid-char")
     private UUID businessId;
@@ -43,7 +45,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private Set<OrderItem> orderItems = new HashSet<>();
 
-    public void add(@NonNull OrderItem orderItem){
+    public void add(@NonNull OrderItem orderItem) {
         orderItem.setOrder(this);
         this.orderItems.add(orderItem);
     }

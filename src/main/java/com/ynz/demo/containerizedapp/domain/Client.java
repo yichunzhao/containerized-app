@@ -30,7 +30,8 @@ public class Client {
     @OneToMany(mappedBy = "client", targetEntity = Order.class)
     private Set<Order> orders = new HashSet<>();
 
-    public void addOrder(Order order){
+    public void addOrder(Order order) {
+        order.setClient(this);
         orders.add(order);
     }
 

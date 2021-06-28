@@ -8,6 +8,7 @@ import javax.persistence.*;
 
 
 @Entity
+@Table(name = "Order_Items")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,7 +31,7 @@ public class OrderItem {
 
     @Override
     public int hashCode() {
-        return 1245;
+        return 12345;
     }
 
     @Override
