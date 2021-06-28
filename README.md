@@ -99,16 +99,17 @@ We can also perform the outer fetch join in a similar way to outer joins, where 
 ````
 "SELECT d FROM Department d LEFT JOIN FETCH d.employees"
 ````
-The JOIN FETCH expression is not a regular JOIN and it does not define a JOIN variable. Its only purpose is specifying related objects that should be fetched from the database with the query results on the same round trip. It tells that underlying 
+The JOIN FETCH expression is not a regular JOIN and it does not define a JOIN variable. Its only purpose is specifying related objects that should be fetched from the database with the query results on the same round trip. 
 
 
 **About OffSetDateTime and PostgreSQL**
-When saving a offSetDateTime value into PostgreSQL database, the time offset will be transalated into the time that PostgreSQL is configured, which is normally is normally the time-zone of the host that is running the Postgres. If populating the following DateTime with TimeZone
+When saving a offSetDateTime value into PostgreSQL database, the time offset will be projected into the time zone that PostgreSQL host is running on. Populating the following DateTime with TimeZone into the database, 
 ````
 insert into Client_orders(id, creation_date_time_with_zone, order_status, FK_Client_Id) values(2, '1999-01-08 14:05:06-08', 'SUSPENDING',1);
 
 ````
-Then it will be mapped into the PostgreSQL database as  ``1999-01-08 23:05:06+01``, inline with the database time-zone (+1:00)
+Then the date-time is automatically projected into  ``1999-01-08 23:05:06+01``, inline with the database time-zone (+1:00)
+
 
 **About JPA translating OffSetDateTimet into Database**
 
@@ -138,18 +139,6 @@ Date and Time are separated by 'T', and time-zone starts with '+' or '-'; otherw
 
 Using entity-based projections that project 
 
-Interface-based projections:
-
-Nullable Wrappers
-Getters in projection interfaces can make use of nullable wrappers for improved null-safety. Currently supported wrapper types are:
-
-java.util.Optional
-
-com.google.common.base.Optional
-
-scala.Option
-
-io.vavr.control.Option
 
 Class-based projections (DTOs)
 
@@ -180,6 +169,30 @@ In another case, if using an entity projection, then Hibernate generates an left
 Hibernate: select order0_.id as id1_1_0_, order0_.business_id as business2_1_0_, order0_.fk_client_id as fk_clien5_1_0_, order0_.creation_date_time_with_zone as creation3_1_0_, order0_.order_status as order_st4_1_0_, client1_.id as id1_0_1_, client1_.email as email2_0_1_, client1_.name as name3_0_1_ from client_orders order0_ left outer join client client1_ on order0_.fk_client_id=client1_.id where order0_.id=?
 ````
 
-**About One-Many and Many-One default fetcg tpes**
+**About One-Many and Many-One default fetch-tpe**
 
-@OneToMany fetch model default to lazy-loading; however, @ManyToOne default fetch model default to eager-loading
+1) Jpa @OneToMany fetch model defaults to lazy-loading; however, @ManyToOne fetch model defaults to eager-loading. 1) is avoid of N+1 problem. 
+
+
+** About @DynamicInsert annotation**
+
+For inserting, should this entity use dynamic sql generation where only non-null columns get referenced in the prepared sql statement.
+
+````
+    @Column(updatable = false, nullable = false)
+    @ColumnDefault("gen_random_uuid()")
+    @Type(type = "uuid-char")
+    private UUID businessId;
+````
+
+The field value bussinessId has been set to auto-generated as inserting a new entry, meanwhile setting field nullable = true,
+
+it causes the following error: 
+
+> org.springframework.dao.DataIntegrityViolationException: not-null property references a null or transient value : com.ynz.demo.containerizedapp.domain.Order.businessId; nested > exception is org.hibernate.PropertyValueException: not-null property references a null or transient value : com.ynz.demo.containerizedapp.domain.Order.businessId
+
+
+
+
+
+
