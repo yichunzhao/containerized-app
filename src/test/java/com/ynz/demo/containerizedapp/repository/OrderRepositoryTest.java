@@ -16,6 +16,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,7 +41,10 @@ class OrderRepositoryTest {
         UUID order1BusinessId = order1.getBusinessId();
 
         OffsetDateTime expectedTimeStamp = OffsetDateTime.parse("1999-01-08T14:05:06+01");
-        OrderInfo foundOrderInfo = orderRepository.findByBusinessId(order1BusinessId);
+        Optional<OrderInfo> foundOrderInfoOpt = orderRepository.findByBusinessIdDynamic(order1BusinessId, OrderInfo.class);
+        assertThat(foundOrderInfoOpt.isPresent(), is(true));
+
+        OrderInfo foundOrderInfo = foundOrderInfoOpt.get();
 
         assertAll(
                 () -> assertThat(foundOrderInfo.getOrderStatus(), is(OrderStatus.SUSPENDING)),
@@ -107,6 +111,22 @@ class OrderRepositoryTest {
         assertThat(orderItem1.getOrder(), is(notNullValue()));
         assertThat(orderItem2.getOrder(), is(notNullValue()));
         assertThat(orderItem3.getOrder(), is(notNullValue()));
+    }
+
+    @Test
+    @DisplayName("Join Fetch Order and OrderIterm by one trip")
+    void givenOrderUUID_ReturnsInOneQuery() {
+        Order order1 = testEntityManager.find(Order.class, 2);
+        assertThat(order1, is(notNullValue()));
+
+        UUID bId = order1.getBusinessId();
+
+        log.info("find order by uuid: {} \n", bId);
+        Optional<Order> ordersOptional = orderRepository.findByBusinessIdDynamic(bId, Order.class);
+        assertNotNull(ordersOptional);
+        assertThat(ordersOptional.isPresent(), is(true));
+        Set<OrderItem> itemSet = ordersOptional.get().getOrderItems();
+        assertThat(itemSet, hasSize(2));
     }
 
 }
