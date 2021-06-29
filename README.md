@@ -203,5 +203,12 @@ as saving the instance from java side, it causes a Data integraty exception:
 When the entity instance is in transient state, the businessId is null; this viloates the contrains, i.e. nullable = false.   
 
 
+**Using DTO along with Projection**
 
+Using dtos along with creation operation, meanwhile using interface projections along with query operations. 
+
+**Using springdoc-openapi-ui docment API**
+
+springdoc-openapi-ui
+http://localhost:8080/swagger-ui
 
