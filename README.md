@@ -156,21 +156,27 @@ If optimizing the query execution by limiting the fields to be loaded, the field
 Class-based project doesn't support the nested projection. Using Lombok @Value annotation can dramatically simplify the code for creating a DTO. 
 
 
-
-Spring JPA Projection may optimize the SQL query according to queried parameters. The follow case demonstrates that the client is not eagerly loaded, for the target paramters are limited to the attributes belonging to the Order.     
+Spring JPA Projection may optimize the SQL query according to queried data model. 
 
 ````
 public interface OrderRepository extends CrudRepository<Order, Integer> {
 
-    OrderInfo findByBusinessId(UUID businessId);
+    <T> T findByBusinessId(UUID businessId, Class<T> type);
 }
-
-Hibernate: select order0_.business_id as col_0_0_, order0_.creation_date_time_with_zone as col_1_0_, order0_.order_status as col_2_0_ from client_orders order0_ where order0_.business_id=?
 ````
-In another case, if using an entity projection, then Hibernate generates an left outer join with Client, so a projection may improve the performance. 
+
+if projecting to OrderInfo interface, Hibernate generates a simplified sql query.
 
 ````
-Hibernate: select order0_.id as id1_1_0_, order0_.business_id as business2_1_0_, order0_.fk_client_id as fk_clien5_1_0_, order0_.creation_date_time_with_zone as creation3_1_0_, order0_.order_status as order_st4_1_0_, client1_.id as id1_0_1_, client1_.email as email2_0_1_, client1_.name as name3_0_1_ from client_orders order0_ left outer join client client1_ on order0_.fk_client_id=client1_.id where order0_.id=?
+Hibernate: 
+select order0_.business_id as col_0_0_, order0_.creation_date_time_with_zone as col_1_0_, order0_.order_status as col_2_0_ from client_orders order0_ where order0_.business_id=?
+````
+
+In another case, if projecting to Order entity, then Hibernate generates an left outer join with Client(eager loading for to-one relationship).
+
+````
+Hibernate: 
+select order0_.id as id1_1_0_, orderitems1_.id as id1_2_1_, order0_.business_id as business2_1_0_, order0_.fk_client_id as fk_clien5_1_0_, order0_.creation_date_time_with_zone as creation3_1_0_, order0_.order_status as order_st4_1_0_, orderitems1_.amount as amount2_2_1_, orderitems1_.fk_order_id as fk_order4_2_1_, orderitems1_.product_name as product_3_2_1_, orderitems1_.fk_order_id as fk_order4_2_0__, orderitems1_.id as id1_2_0__ from client_orders order0_ inner join order_items orderitems1_ on order0_.id=orderitems1_.fk_order_id where order0_.business_id=?
 ````
 
 **About One-Many and Many-One default fetch-tpe**
