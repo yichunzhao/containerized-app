@@ -3,7 +3,7 @@ package com.ynz.demo.containerizedapp.repository;
 import com.ynz.demo.containerizedapp.domain.Client;
 import com.ynz.demo.containerizedapp.domain.Order;
 import com.ynz.demo.containerizedapp.domain.OrderItem;
-import com.ynz.demo.containerizedapp.dto.OrderInfo;
+import com.ynz.demo.containerizedapp.dto.projection.OrderInfo;
 import com.ynz.demo.containerizedapp.shared.OrderStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;

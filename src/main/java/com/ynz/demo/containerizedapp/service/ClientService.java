@@ -3,7 +3,8 @@ package com.ynz.demo.containerizedapp.service;
 import com.ynz.demo.containerizedapp.domain.Client;
 import com.ynz.demo.containerizedapp.domain.Order;
 import com.ynz.demo.containerizedapp.dto.ClientDto;
-import com.ynz.demo.containerizedapp.dto.ClientInfo;
+import com.ynz.demo.containerizedapp.dto.mapper.OrderMapper;
+import com.ynz.demo.containerizedapp.dto.projection.ClientInfo;
 import com.ynz.demo.containerizedapp.dto.OrderDto;
 import com.ynz.demo.containerizedapp.exceptions.ClientNotFoundException;
 import com.ynz.demo.containerizedapp.exceptions.DuplicatedClientException;
@@ -11,6 +12,8 @@ import com.ynz.demo.containerizedapp.repository.ClientRepository;
 import com.ynz.demo.containerizedapp.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.OffsetDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +54,16 @@ public class ClientService {
     public ClientInfo findClientByEmail(String clientEmail) {
         return clientRepository.findByEmail(clientEmail)
                 .orElseThrow(() -> new ClientNotFoundException("User:  " + clientEmail + " is not found..."));
+    }
+
+    public OrderDto createOrder(OrderDto orderDto){
+        OrderMapper mapper = OrderMapper.instance();
+        Order order = mapper.mapToEntity(orderDto);
+        order.setCreatedAt(OffsetDateTime.now());
+
+        Order persisted = orderRepository.save(order);
+
+        return mapper.mapToDto(persisted);
     }
 
 }

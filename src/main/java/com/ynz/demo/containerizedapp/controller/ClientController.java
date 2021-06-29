@@ -1,7 +1,8 @@
 package com.ynz.demo.containerizedapp.controller;
 
 import com.ynz.demo.containerizedapp.dto.ClientDto;
-import com.ynz.demo.containerizedapp.dto.ClientInfo;
+import com.ynz.demo.containerizedapp.dto.OrderDto;
+import com.ynz.demo.containerizedapp.dto.projection.ClientInfo;
 import com.ynz.demo.containerizedapp.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,12 @@ public class ClientController {
     @GetMapping("{email}")
     public ResponseEntity<ClientInfo> getClientByEmail(@PathVariable String email) {
         return ResponseEntity.ok().body(clientService.findClientByEmail(email));
+    }
+
+    @PostMapping("order")
+    public ResponseEntity<OrderDto> createClientOrder(@RequestBody OrderDto orderDto) {
+        OrderDto created = clientService.createOrder(orderDto);
+        return ResponseEntity.ok(created);
     }
 
 }

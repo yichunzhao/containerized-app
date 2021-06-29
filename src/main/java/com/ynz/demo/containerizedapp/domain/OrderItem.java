@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 
 @Entity
@@ -39,7 +40,6 @@ public class OrderItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OrderItem orderItem = (OrderItem) o;
-        return this.getId().equals(orderItem.getId());
+        return amount == orderItem.amount && Objects.equals(id, orderItem.id) && Objects.equals(productName, orderItem.productName) && Objects.equals(order, orderItem.order);
     }
-
 }

@@ -1,4 +1,4 @@
-package com.ynz.demo.containerizedapp.dto;
+package com.ynz.demo.containerizedapp.dto.projection;
 
 import com.ynz.demo.containerizedapp.shared.OrderStatus;
 

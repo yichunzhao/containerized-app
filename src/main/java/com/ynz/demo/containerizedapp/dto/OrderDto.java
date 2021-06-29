@@ -1,16 +1,18 @@
 package com.ynz.demo.containerizedapp.dto;
 
 import com.ynz.demo.containerizedapp.shared.OrderStatus;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
-@Getter
-@NoArgsConstructor
+@Data
+@AllArgsConstructor
 public class OrderDto {
 
-    @NotNull
     private OrderStatus orderStatus;
+
+    private Set<OrderItemDto> orderItems = new HashSet<>();
 
 }

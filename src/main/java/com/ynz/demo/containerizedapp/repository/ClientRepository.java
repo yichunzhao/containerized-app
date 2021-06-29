@@ -2,7 +2,7 @@ package com.ynz.demo.containerizedapp.repository;
 
 import com.ynz.demo.containerizedapp.domain.Client;
 import com.ynz.demo.containerizedapp.domain.Order;
-import com.ynz.demo.containerizedapp.dto.ClientInfo;
+import com.ynz.demo.containerizedapp.dto.projection.ClientInfo;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
