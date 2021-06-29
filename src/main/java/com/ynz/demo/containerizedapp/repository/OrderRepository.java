@@ -14,4 +14,6 @@ public interface OrderRepository extends CrudRepository<Order, Integer> {
     @Query("SELECT o FROM Order o JOIN FETCH o.orderItems WHERE o.businessId=:businessId")
     <T> Optional<T> findByBusinessIdDynamic(@Param("businessId") UUID businessId, Class<T> type);
 
+    <T> T findByBusinessId(UUID businessId, Class<T> type);
+
 }

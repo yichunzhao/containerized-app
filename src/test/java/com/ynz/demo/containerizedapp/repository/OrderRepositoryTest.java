@@ -129,4 +129,25 @@ class OrderRepositoryTest {
         assertThat(itemSet, hasSize(2));
     }
 
+    @Test
+    @DisplayName("Projecting query result to orderInfo interface")
+    void findOrderByBusinessId_ProjectToOrderInfo() {
+        Order targetOrder = testEntityManager.find(Order.class, 2);
+        UUID bId = targetOrder.getBusinessId();
+
+        OrderInfo orderInfo = orderRepository.findByBusinessId(bId, OrderInfo.class);
+        assertNotNull(orderInfo);
+    }
+
+    @Test
+    @DisplayName("Projecting query result to Entity")
+    void findOrderByBusinessId_ProjectToOrderEntity() {
+        Order targetOrder = testEntityManager.find(Order.class, 2);
+        UUID bId = targetOrder.getBusinessId();
+
+        Order order = orderRepository.findByBusinessId(bId, Order.class);
+        assertNotNull(order);
+        assertNotNull(order.getClient());
+    }
+
 }
