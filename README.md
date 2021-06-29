@@ -179,7 +179,7 @@ Hibernate:
 select order0_.id as id1_1_0_, orderitems1_.id as id1_2_1_, order0_.business_id as business2_1_0_, order0_.fk_client_id as fk_clien5_1_0_, order0_.creation_date_time_with_zone as creation3_1_0_, order0_.order_status as order_st4_1_0_, orderitems1_.amount as amount2_2_1_, orderitems1_.fk_order_id as fk_order4_2_1_, orderitems1_.product_name as product_3_2_1_, orderitems1_.fk_order_id as fk_order4_2_0__, orderitems1_.id as id1_2_0__ from client_orders order0_ inner join order_items orderitems1_ on order0_.id=orderitems1_.fk_order_id where order0_.business_id=?
 ````
 
-**About One-Many and Many-One default fetch-tpe**
+**About One-Many and Many-One default fetch-type**
 
 Jpa @OneToMany fetch model defaults to lazy-loading; @ManyToOne fetch model defaults to eager-loading.  
 
