@@ -7,14 +7,14 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
 @NoArgsConstructor
 @Getter
 @Setter
-public class Client implements IsDomain{
+public class Client implements IsDomain {
 
     @Id
     @GeneratedValue
@@ -28,7 +28,7 @@ public class Client implements IsDomain{
     private String email;
 
     @OneToMany(mappedBy = "client", targetEntity = Order.class, cascade = CascadeType.PERSIST)
-    private Set<Order> orders = new HashSet<>();
+    private Set<Order> orders = new LinkedHashSet<>();
 
     public void addOrder(Order order) {
         order.setClient(this);

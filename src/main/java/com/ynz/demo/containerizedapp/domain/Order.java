@@ -11,7 +11,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,7 +27,7 @@ public class Order implements IsDomain {
     @GeneratedValue
     private int id;
 
-    //@Column(updatable = false, nullable = false)
+    @Column(updatable = false)
     @ColumnDefault("gen_random_uuid()")
     @Type(type = "uuid-char")
     private UUID businessId;
@@ -43,7 +43,7 @@ public class Order implements IsDomain {
     private Client client;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
-    private Set<OrderItem> orderItems = new HashSet<>();
+    private Set<OrderItem> orderItems = new LinkedHashSet<>();
 
     public void add(@NonNull OrderItem orderItem) {
         orderItem.setOrder(this);
