@@ -210,5 +210,13 @@ Using dtos along with creation operation, meanwhile using interface projections 
 **Using springdoc-openapi-ui docment API**
 
 springdoc-openapi-ui
-http://localhost:8080/swagger-ui
+http://localhost:8080/swagger-ui.html
 
+**Using Actuator**
+
+[actuator:heath checking](http://localhost:8080/actuator)
+
+**How does Java deserialization work?**
+
+> When deserializing a byte stream back to an object it does not use the constructor. It creates an empty object and uses reflection to write the data to the fields. Just like 
+> with serialization, private and final fields are also included.
