@@ -12,14 +12,14 @@ import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 
 @RequiredArgsConstructor(staticName = "instance")
-public class OrderMapper implements EntityToDto<Order, OrderDto> {
+public class OrderMapper implements Invertible<Order, OrderDto> {
 
     @Override
     public OrderDto mapToDto(@NonNull Order order) {
         OrderItemMapper mapper = OrderItemMapper.instance();
         Set<OrderItemDto> itemDtoSet = order.getOrderItems().stream().map(mapper::mapToDto).collect(toSet());
 
-        return new OrderDto(order.getOrderStatus(), itemDtoSet);
+        return new OrderDto(itemDtoSet);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class OrderMapper implements EntityToDto<Order, OrderDto> {
         Set<OrderItem> orderItemSet = orderDto.getOrderItems().stream().map(mapper::mapToEntity).collect(toSet());
 
         Order order = new Order();
-        order.setOrderStatus(orderDto.getOrderStatus());
+
         orderItemSet.forEach(order::add);
 
         return order;

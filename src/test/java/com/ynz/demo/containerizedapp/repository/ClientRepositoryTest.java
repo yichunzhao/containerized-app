@@ -2,6 +2,7 @@ package com.ynz.demo.containerizedapp.repository;
 
 import com.ynz.demo.containerizedapp.domain.Client;
 import com.ynz.demo.containerizedapp.domain.Order;
+import com.ynz.demo.containerizedapp.dto.projection.ClientInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -36,7 +37,7 @@ class ClientRepositoryTest {
 
     @Test
     void findClientByEmail() {
-        assertTrue(clientRepository.findByEmail("ynz@hotmail.com").isPresent());
+        assertTrue(clientRepository.findByEmail("ynz@hotmail.com", ClientInfo.class).isPresent());
     }
 
     @Test

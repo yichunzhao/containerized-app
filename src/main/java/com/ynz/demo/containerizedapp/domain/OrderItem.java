@@ -13,7 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderItem {
+public class OrderItem implements IsDomain {
 
     @Id
     @GeneratedValue
@@ -42,4 +42,5 @@ public class OrderItem {
         OrderItem orderItem = (OrderItem) o;
         return amount == orderItem.amount && Objects.equals(id, orderItem.id) && Objects.equals(productName, orderItem.productName) && Objects.equals(order, orderItem.order);
     }
+
 }

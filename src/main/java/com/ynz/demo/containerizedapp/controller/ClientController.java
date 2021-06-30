@@ -5,6 +5,7 @@ import com.ynz.demo.containerizedapp.dto.OrderDto;
 import com.ynz.demo.containerizedapp.dto.projection.ClientInfo;
 import com.ynz.demo.containerizedapp.service.ClientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("client")
@@ -32,10 +34,17 @@ public class ClientController {
         return ResponseEntity.ok().body(clientService.findClientByEmail(email));
     }
 
-    @PostMapping("order")
-    public ResponseEntity<OrderDto> createClientOrder(@RequestBody OrderDto orderDto) {
-        OrderDto created = clientService.createOrder(orderDto);
-        return ResponseEntity.ok(created);
+    @PostMapping("{email}/orders")
+    public ResponseEntity<OrderDto> createClientOrder(@PathVariable("email") String clientEmail, @RequestBody OrderDto orderDto) {
+        OrderDto createdOrderDto = clientService.createClientOrder(clientEmail, orderDto);
+        //ClientDto clientDto = clientService.addClientOrder(clientEmail, createdOrderDto);
+
+        return ResponseEntity.ok(createdOrderDto);
+    }
+
+    @GetMapping("{email}/orders")
+    public ResponseEntity<List<OrderDto>> getClientOrders(@PathVariable("email") String clientEmail) {
+        return ResponseEntity.status(HttpStatus.FOUND).body(clientService.findClientOrders(clientEmail));
     }
 
 }

@@ -14,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Client {
+public class Client implements IsDomain{
 
     @Id
     @GeneratedValue

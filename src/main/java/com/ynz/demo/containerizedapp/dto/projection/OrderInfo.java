@@ -11,4 +11,5 @@ public interface OrderInfo {
     OffsetDateTime getCreatedAt();
 
     OrderStatus getOrderStatus();
+
 }

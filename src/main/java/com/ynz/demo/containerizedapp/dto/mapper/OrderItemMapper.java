@@ -6,7 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(staticName = "instance")
-public class OrderItemMapper implements EntityToDto<OrderItem, OrderItemDto> {
+public class OrderItemMapper implements Invertible<OrderItem, OrderItemDto> {
 
     @Override
     public OrderItemDto mapToDto(@NonNull OrderItem orderItem) {
