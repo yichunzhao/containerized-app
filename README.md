@@ -214,7 +214,7 @@ http://localhost:8080/swagger-ui.html
 
 **Using Actuator**
 
-[actuator:heath checking](http://localhost:8080/actuator)
+http://localhost:8080/actuator
 
 **How does Java deserialization work?**
 
