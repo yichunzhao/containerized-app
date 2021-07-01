@@ -296,4 +296,4 @@ Can also be used with method level validation, indicating that a specific class 
 
 Validating signle method parameter, i.e. request parameters and path variables
 
-Note that we have to add Spring’s @Validated annotation to the controller at the class level to tell Spring to evaluate the constraint annotations on method parameters. It will throw ContrantViolationException.  
+Note that we have to add Spring’s @Validated annotation to the controller at the class level to tell Spring to evaluate the constraint annotations on method parameters. It will throw ConstraintViolationException.  
