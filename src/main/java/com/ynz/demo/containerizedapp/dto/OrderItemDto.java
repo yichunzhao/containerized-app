@@ -15,7 +15,6 @@ public class OrderItemDto implements IsDto {
     @NotBlank(message = "Order item must contain a product name")
     private String productName;
 
-    @NotBlank
     @PositiveOrZero(message = "amount must >=0")
     private int amount;
 

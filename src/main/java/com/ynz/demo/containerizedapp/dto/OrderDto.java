@@ -16,4 +16,8 @@ public class OrderDto implements IsDto {
     @Valid
     private Set<OrderItemDto> orderItems = new HashSet<>();
 
+    public void add(OrderItemDto orderItemDto){
+        orderItems.add(orderItemDto);
+    }
+
 }
