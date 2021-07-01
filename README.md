@@ -274,10 +274,19 @@ Starting with Boot 2.3, we also need to explicitly add the spring-boot-starter-v
     <artifactId>spring-boot-starter-validation</artifactId> 
 </dependency>
 
+In general, we use @Valid to validate RequestBody, meanwhile using @Validated to validate method parameters; In addition, using @Validated as validating partial constraints.
+
 @Valid 
 
 Marks a property, method parameter or method return type for validation cascading.
 Constraints defined on the object and its properties are be validated when the property, method parameter or method return type is validated.
+
+Using @Valid Validating RequestBody
+
+if validation fails, it triggers a MethodArgumentNotValidException – This exception is thrown when an argument annotated with @Valid failed validation.
+Spring will translate it into bad request automatically; this exception is defined in Spring framework, and it extends from BindException. 
+
+The magic happends in the abstract class ResponseEntityExceptionHandler, where the global exception Advice is extended from. Spring by default handles the MethodArgumentNotValidException here, but return a ResponseEntity without a Body. So API user won't see any userful message. We may override this method from the custom code.  
 
 @Validated
 
@@ -285,9 +294,6 @@ Variant of JSR-303's Valid, supporting the specification of validation groups. D
 Can be used e.g. with Spring MVC handler methods arguments. Supported through SmartValidator's validation hint concept, with validation group classes acting as hint objects.
 Can also be used with method level validation, indicating that a specific class is supposed to be validated at the method level (acting as a pointcut for the corresponding validation interceptor), but also optionally specifying the validation groups for method-level validation in the annotated class. 
 
-MethodArgumentNotValidException – This exception is thrown when an argument annotated with @Valid failed validation.
+Validating signle method parameter, i.e. request parameters and path variables
 
-this exception is defined in Spring framework, and it extends from BindException. 
-
-MethodArgumentNotValidException is handled in Spring ResponseEntityExceptionHandler, but it returns a response entity without a body; we may need to override the method impl. from the ControllerAdvice.  
-
+Note that we have to add Spring’s @Validated annotation to the controller at the class level to tell Spring to evaluate the constraint annotations on method parameters. It will throw ContrantViolationException.  
