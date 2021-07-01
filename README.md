@@ -220,3 +220,80 @@ http://localhost:8080/actuator
 
 > When deserializing a byte stream back to an object it does not use the constructor. It creates an empty object and uses reflection to write the data to the fields. Just like 
 > with serialization, private and final fields are also included.
+
+therefore, the the pojo for reconscruting deserialization result, it should have a non-argument constructor.
+
+**About java bean validation**
+
+JSR 380 is a specification of the Java API for bean validation, part of Jakarta EE and JavaSE. This ensures that the properties of a bean meet specific criteria, using annotations such as @NotNull, @Min, and @Max. This version requires Java 8 or higher, and takes advantage of new features added in Java 8, such as type annotations and support for new types like Optional and LocalDate.
+
+* expressing constraints on object models via annotations
+* allowing custom constraints in an extensible way
+* providing API to validate objects and object graphs
+* providing API to validate paramters and return values of methods and constructors
+* reporting the set of violations
+* runs on JSE and Jakarta EE 8
+
+All of the annotations used in the example are standard JSR annotations:
+
+@NotNull validates that the annotated property value is not null.
+@AssertTrue validates that the annotated property value is true.
+@Size validates that the annotated property value has a size between the attributes min and max; can be applied to String, Collection, Map, and array properties.
+@Min validates that the annotated property has a value no smaller than the value attribute.
+@Max validates that the annotated property has a value no larger than the value attribute.
+@Email validates that the annotated property is a valid email address.
+Some annotations accept additional attributes, but the message attribute is common to all of them. This is the message that will usually be rendered when the value of the respective property fails validation.
+
+And some additional annotations that can be found in the JSR:
+
+* @NotEmpty validates that the property is not null or empty; can be applied to String, Collection, Map or Array values.
+* @NotBlank can be applied only to text values and validates that the property is not null or whitespace.
+* @Positive and @PositiveOrZero apply to numeric values and validate that they are strictly positive, or positive including 0.
+* @Negative and @NegativeOrZero apply to numeric values and validate that they are strictly negative, or negative including 0.
+* @Past and @PastOrPresent validate that a date value is in the past or the past including the present; can be applied to date types including those added in Java 8.
+* @Future and @FutureOrPresent validate that a date value is in the future, or in the future including the present.
+
+The validation annotations can also be applied to elements of a collection:
+
+List<@NotBlank String> preferences;
+
+
+Also, the specification supports the new Optional type in Java 8:
+
+private LocalDate dateOfBirth;
+
+public Optional<@Past LocalDate> getDateOfBirth() {
+    return Optional.of(dateOfBirth);
+}
+
+
+Starting with Boot 2.3, we also need to explicitly add the spring-boot-starter-validation dependency:
+
+<dependency> 
+    <groupId>org.springframework.boot</groupId> 
+    <artifactId>spring-boot-starter-validation</artifactId> 
+</dependency>
+
+In general, we use @Valid to validate RequestBody, meanwhile using @Validated to validate method parameters; In addition, using @Validated as validating partial constraints.
+
+@Valid 
+
+Marks a property, method parameter or method return type for validation cascading.
+Constraints defined on the object and its properties are be validated when the property, method parameter or method return type is validated.
+
+Using @Valid Validating RequestBody
+
+if validation fails, it triggers a MethodArgumentNotValidException – This exception is thrown when an argument annotated with @Valid failed validation.
+Spring will translate it into bad request automatically; this exception is defined in Spring framework, and it extends from BindException. 
+
+The magic happends in the abstract class ResponseEntityExceptionHandler, where the global exception Advice is extended from. Spring by default handles the MethodArgumentNotValidException here, but return a ResponseEntity without a Body. So API user won't see any userful message. We may override this method from the custom code.  
+
+@Validated
+
+Variant of JSR-303's Valid, supporting the specification of validation groups. Designed for convenient use with Spring's JSR-303 support but not JSR-303 specific.
+Can be used e.g. with Spring MVC handler methods arguments. Supported through SmartValidator's validation hint concept, with validation group classes acting as hint objects.
+Can also be used with method level validation, indicating that a specific class is supposed to be validated at the method level (acting as a pointcut for the corresponding validation interceptor), but also optionally specifying the validation groups for method-level validation in the annotated class. 
+
+Validating signle method parameter, i.e. request parameters and path variables
+
+Note that we have to add Spring’s @Validated annotation to the controller at the class level to tell Spring to evaluate the constraint annotations on method parameters. It will throw ConstraintViolationException.  
