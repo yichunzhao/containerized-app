@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class OrderDto implements IsDto {
 
+    @Valid
     private Set<OrderItemDto> orderItems = new HashSet<>();
 
 }
