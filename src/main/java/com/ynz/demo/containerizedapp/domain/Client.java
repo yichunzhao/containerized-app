@@ -3,9 +3,15 @@ package com.ynz.demo.containerizedapp.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -30,7 +36,7 @@ public class Client implements IsDomain {
     @OneToMany(mappedBy = "client", targetEntity = Order.class, cascade = CascadeType.PERSIST)
     private Set<Order> orders = new LinkedHashSet<>();
 
-    public void addOrder(Order order) {
+    public void addOrder(@NonNull Order order) {
         order.setClient(this);
         orders.add(order);
     }

@@ -12,12 +12,10 @@ import com.ynz.demo.containerizedapp.repository.ClientRepository;
 import com.ynz.demo.containerizedapp.repository.OrderRepository;
 import com.ynz.demo.containerizedapp.shared.OrderStatus;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
