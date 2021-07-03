@@ -19,6 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.net.URI;
 import java.util.List;
 
@@ -33,23 +34,22 @@ public class ClientController {
     public ResponseEntity<ClientDto> createNewClient(@Valid @RequestBody ClientDto clientDto, HttpServletRequest request) {
         ClientDto created = clientService.createNewClient(clientDto);
         URI uri = ServletUriComponentsBuilder.fromRequestUri(request).pathSegment("{email}").buildAndExpand(created.getEmail()).encode().toUri();
-
         return ResponseEntity.created(uri).body(created);
     }
 
     @GetMapping("{email}")
-    public ResponseEntity<ClientInfo> getClientByEmail(@PathVariable("email") @Email String email) {
-        return ResponseEntity.ok().body(clientService.findClientByEmail(email));
+    public ResponseEntity<ClientInfo> getClientByEmail(@PathVariable("email") @Email @NotBlank String email) {
+        return ResponseEntity.status(HttpStatus.FOUND).body(clientService.findClientByEmail(email));
     }
 
     @PostMapping("{email}/orders")
-    public ResponseEntity<OrderDto> createClientOrder(@PathVariable("email") @Email String clientEmail, @RequestBody OrderDto orderDto) {
+    public ResponseEntity<OrderDto> createClientOrder(@PathVariable("email") @Email @NotBlank String clientEmail, @RequestBody OrderDto orderDto) {
         OrderDto createdOrderDto = clientService.createClientOrder(clientEmail, orderDto);
         return ResponseEntity.ok(createdOrderDto);
     }
 
     @GetMapping("{email}/orders")
-    public ResponseEntity<List<OrderDto>> getClientOrders(@PathVariable("email") @Email String clientEmail) {
+    public ResponseEntity<List<OrderDto>> getClientOrders(@PathVariable("email") @Email @NotBlank String clientEmail) {
         return ResponseEntity.status(HttpStatus.FOUND).body(clientService.findClientOrders(clientEmail));
     }
 
