@@ -337,6 +337,7 @@ This schema is composed of five parts:
 1. detail – a human-readable explanation of the error
 1. instance – a URI that identifies the specific occurrence of the error
 
+````
 > {
 >     "type": "/errors/incorrect-user-pass",
 >    "title": "Incorrect username or password.",
@@ -344,7 +345,7 @@ This schema is composed of five parts:
 >    "detail": "Authentication failed due to incorrect username or password.",
 >    "instance": "/login/log/abc123"
 > }
-
+````
 
 By using URIs, clients can follow these paths to find more information about the error
 
