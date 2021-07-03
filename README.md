@@ -318,11 +318,11 @@ the server must notify the client if the request was successfully handled or not
 
 HTTP accomplishes this with five categories of status codes:
 
-100-level (Informational) – server acknowledges a request
-200-level (Success) – server completed the request as expected
-300-level (Redirection) – client needs to perform further actions to complete the request
-400-level (Client error) – client sent an invalid request
-500-level (Server error) – server failed to fulfill a valid request due to an error with server
+* 100-level (Informational) – server acknowledges a request
+* 200-level (Success) – server completed the request as expected
+* 300-level (Redirection) – client needs to perform further actions to complete the request
+* 400-level (Client error) – client sent an invalid request
+* 500-level (Server error) – server failed to fulfill a valid request due to an error with server
 Based on the response code, a client can surmise the result of a particular request.
 
 The simplest way we handle errors is to respond with an appropriate status code.
@@ -338,13 +338,13 @@ This schema is composed of five parts:
 1. instance – a URI that identifies the specific occurrence of the error
 
 ````
-> {
->     "type": "/errors/incorrect-user-pass",
->    "title": "Incorrect username or password.",
->    "status": 401,
->    "detail": "Authentication failed due to incorrect username or password.",
->    "instance": "/login/log/abc123"
-> }
+ {
+    "type": "/errors/incorrect-user-pass",
+    "title": "Incorrect username or password.",
+    "status": 401,
+    "detail": "Authentication failed due to incorrect username or password.",
+    "instance": "/login/log/abc123"
+ }
 ````
 
 By using URIs, clients can follow these paths to find more information about the error
