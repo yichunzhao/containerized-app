@@ -278,12 +278,12 @@ In general, we use @Valid to validate RequestBody, meanwhile using @Validated to
 
 @Valid 
 
-Marks a property, method parameter or method return type for validation cascading.
+Marks a property(cacade validation), method parameter(Object type) or method return type for validation cascading.
 Constraints defined on the object and its properties are be validated when the property, method parameter or method return type is validated.
 
 Using @Valid Validating RequestBody
 
-if validation fails, it triggers a MethodArgumentNotValidException – This exception is thrown when an argument annotated with @Valid failed validation.
+if validation fails, it triggers _a MethodArgumentNotValidException_ – This exception is thrown when an argument annotated with @Valid failed validation.
 Spring will translate it into bad request automatically; this exception is defined in Spring framework, and it extends from BindException. 
 
 The magic happends in the abstract class ResponseEntityExceptionHandler, where the global exception Advice is extended from. Spring by default handles the MethodArgumentNotValidException here, but return a ResponseEntity without a Body. So API user won't see any userful message. We may override this method from the custom code.  
@@ -291,9 +291,69 @@ The magic happends in the abstract class ResponseEntityExceptionHandler, where t
 @Validated
 
 Variant of JSR-303's Valid, supporting the specification of validation groups. Designed for convenient use with Spring's JSR-303 support but not JSR-303 specific.
-Can be used e.g. with Spring MVC handler methods arguments. Supported through SmartValidator's validation hint concept, with validation group classes acting as hint objects.
+Can be used e.g. with _Spring MVC handler methods arguments_. Supported through SmartValidator's validation hint concept, with validation group classes acting as hint objects.
 Can also be used with method level validation, indicating that a specific class is supposed to be validated at the method level (acting as a pointcut for the corresponding validation interceptor), but also optionally specifying the validation groups for method-level validation in the annotated class. 
 
-Validating signle method parameter, i.e. request parameters and path variables
+In constrast of validating RequestBody, validating single method parameter, i.e. request parameters and path variables, we have to add Spring’s @Validated annotation to the controller at the class level to tell Spring to evaluate the constraint annotations on method parameters, and note that it will throw _ConstraintViolationException_.  
 
-Note that we have to add Spring’s @Validated annotation to the controller at the class level to tell Spring to evaluate the constraint annotations on method parameters. It will throw ConstraintViolationException.  
+Creating Cross-Parameter Constraints
+
+In some cases, we might need to validate multiple values at once, e.g., two numeric amounts being one bigger than the other.
+Cross-parameter constraints can be considered as the method validation equivalent to class-level constraints.
+
+**Mapping Primary Keys**
+
+The TABLE strategy uses a database table to generate unique primary key values. This requires pessimistic locking and isn’t the most efficient approach.
+
+The IDENTITY strategy forces Hibernate to execute the SQL INSERT statement immediately. Due to this, Hibernate can’t use any of its performance optimization strategies that require a delayed execution of the statement. One example of that is JDBC batching. But it can also affect simple things, like updating an attribute before the entity gets persisted. When Hibernate has to execute the INSERT statement immediately, it has to perform an additional UPDATE statement to persist the changed value instead of using that value in the INSERT statement.
+
+More about Sequences
+
+The best generation strategy you can use with a PostgreSQL database is the SEQUENCE strategy. It uses a simple database sequence and is highly optimized by PostgreSQL. And Hibernate uses an optimized algorithm by default to avoid unnecessary SELECT statements.
+
+**Handling API Errors**
+
+Http Status Codes: 
+the server must notify the client if the request was successfully handled or not.
+
+HTTP accomplishes this with five categories of status codes:
+
+* 100-level (Informational) – server acknowledges a request
+* 200-level (Success) – server completed the request as expected
+* 300-level (Redirection) – client needs to perform further actions to complete the request
+* 400-level (Client error) – client sent an invalid request
+* 500-level (Server error) – server failed to fulfill a valid request due to an error with server
+Based on the response code, a client can surmise the result of a particular request.
+
+The simplest way we handle errors is to respond with an appropriate status code.
+
+In an effort to standardize REST API error handling, the IETF devised RFC 7807, which creates a generalized error-handling schema.
+
+This schema is composed of five parts:
+
+1. type – a URI identifier that categorizes the error
+1. title – a brief, human-readable message about the error
+1. status – the HTTP response code (optional)
+1. detail – a human-readable explanation of the error
+1. instance – a URI that identifies the specific occurrence of the error
+
+````
+ {
+    "type": "/errors/incorrect-user-pass",
+    "title": "Incorrect username or password.",
+    "status": 401,
+    "detail": "Authentication failed due to incorrect username or password.",
+    "instance": "/login/log/abc123"
+ }
+````
+
+By using URIs, clients can follow these paths to find more information about the error
+
+the best practices of REST API error handling:
+
+* Providing specific status codes
+* Including additional information in response bodies
+* Handling exceptions in a uniform manner
+
+While the details of error handling will vary by application, these general principles apply to nearly all REST APIs and should be adhered to when possible.
+
