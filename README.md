@@ -357,3 +357,8 @@ the best practices of REST API error handling:
 
 While the details of error handling will vary by application, these general principles apply to nearly all REST APIs and should be adhered to when possible.
 
+**Testcontainers**
+
+While TestContainers is tightly couples with the Junit4 rule API, this moudle provides an API that is based on the JUnit Jupiter extension model. 
+
+
