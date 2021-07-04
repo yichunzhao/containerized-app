@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
@@ -87,6 +88,12 @@ public class ExceptionHandlers extends ResponseEntityExceptionHandler {
         sb.append("missing request parameter: ").append(e.getParameterName()).append(" type: ").append(e.getParameterType());
 
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, e.getLocalizedMessage(), sb.toString());
+        return ResponseEntity.badRequest().body(apiError);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "Http message is not readable", e.getMostSpecificCause().getLocalizedMessage());
         return ResponseEntity.badRequest().body(apiError);
     }
 

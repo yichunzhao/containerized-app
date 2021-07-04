@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ynz.demo.containerizedapp.dto.ClientDto;
 import com.ynz.demo.containerizedapp.dto.projection.ClientInfo;
 import com.ynz.demo.containerizedapp.service.ClientService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -96,9 +98,53 @@ class ClientControllerTest {
         )
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("mike"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("ynz@gmail.com"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("ynz@gmail.com"))
+                .andExpect(MockMvcResultMatchers.header().exists("Location"))
+                .andExpect(MockMvcResultMatchers.header().string("Location", Matchers.containsString("ynz@gmail.com")));
 
         verify(clientService).createNewClient(any(ClientDto.class));
+    }
+
+    @Test
+    void missingNameAsCreatingClient_ThenTriggeringConstrainViolation() throws Exception {
+        //arrange
+        ClientDto clientDto = new ClientDto();
+        clientDto.setEmail("ynz@gmail.com");
+
+        //act and assert
+        mvc.perform(MockMvcRequestBuilders.post("/client")
+                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(clientDto))
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    void missingEmailAsCreatingClient_ThenTriggeringConstrainViolation() throws Exception {
+        //arrange
+        ClientDto clientDto = new ClientDto();
+        clientDto.setName("mike");
+
+        //act and assert
+        mvc.perform(MockMvcRequestBuilders.post("/client")
+                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(clientDto))
+        )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(HttpStatus.BAD_REQUEST.name()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.timeStamp").exists());
+    }
+
+    @Test
+    void missingClientRequestBody_ThenTriggerMessageNotReadableException() throws Exception {
+
+        //act and assert
+        mvc.perform(MockMvcRequestBuilders.post("/client")
+                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(null))
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(Matchers.is(HttpStatus.BAD_REQUEST.name())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(is("Http message is not readable")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value(Matchers.containsString("Required request body is missing")));
     }
 
 }
