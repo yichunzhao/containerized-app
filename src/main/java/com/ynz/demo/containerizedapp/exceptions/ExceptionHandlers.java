@@ -73,7 +73,7 @@ public class ExceptionHandlers extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    public ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
         StringBuilder sb = new StringBuilder("missing path variable: ");
         sb.append(e.getVariableName()).append(" method parameter: ").append(e.getParameter());
 

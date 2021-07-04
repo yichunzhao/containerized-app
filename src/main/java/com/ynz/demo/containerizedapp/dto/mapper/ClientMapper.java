@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 public class ClientMapper implements Invertible<Client, ClientDto> {
 
     @Override
-    public ClientDto mapToDto(@NonNull  Client client) {
+    public ClientDto mapToDto(@NonNull Client client) {
         ClientDto clientDto = new ClientDto();
         clientDto.setEmail(client.getEmail());
         clientDto.setName(client.getName());
