@@ -78,7 +78,7 @@ public class ExceptionHandlers extends ResponseEntityExceptionHandler {
         StringBuilder sb = new StringBuilder("missing path variable: ");
         sb.append(e.getVariableName()).append(" method parameter: ").append(e.getParameter());
 
-        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, e.getLocalizedMessage(), sb.toString());
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "servlet request missing path variable", sb.toString());
         return ResponseEntity.badRequest().body(apiError);
     }
 
@@ -87,7 +87,7 @@ public class ExceptionHandlers extends ResponseEntityExceptionHandler {
         StringBuilder sb = new StringBuilder();
         sb.append("missing request parameter: ").append(e.getParameterName()).append(" type: ").append(e.getParameterType());
 
-        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, e.getLocalizedMessage(), sb.toString());
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "servlet request missing request parameter", sb.toString());
         return ResponseEntity.badRequest().body(apiError);
     }
 
@@ -99,7 +99,7 @@ public class ExceptionHandlers extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> fallbackExceptionHandler(Exception e) {
-        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, e.getLocalizedMessage(), "error occurs, but not specific to a handler");
+        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, e.getLocalizedMessage(), "error occurs, but not specific");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiError);
     }
 

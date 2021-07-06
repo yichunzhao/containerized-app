@@ -3,8 +3,11 @@ package com.ynz.demo.containerizedapp.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ynz.demo.containerizedapp.dto.ClientDto;
 import com.ynz.demo.containerizedapp.dto.projection.ClientInfo;
+import com.ynz.demo.containerizedapp.exceptions.ClientNotFoundException;
 import com.ynz.demo.containerizedapp.service.ClientService;
+import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,15 +19,18 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ClientController.class)
+@Slf4j
 class ClientControllerTest {
 
     @MockBean
@@ -84,6 +90,18 @@ class ClientControllerTest {
     }
 
     @Test
+    void whenFindClientNotExisted_ReturnClientNotFound() throws Exception {
+        //arrange
+        when(clientService.findClientByEmail(any(String.class))).thenThrow(new ClientNotFoundException("client is not existed"));
+        String target = "xxx@hotmail.com";
+
+        //act and assert
+        mvc.perform(MockMvcRequestBuilders.get("/client/" + target))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(Matchers.containsString("client is not existed")));
+    }
+
+    @Test
     void testCreateClient() throws Exception {
         //arrange
         ClientDto clientDto = new ClientDto();
@@ -118,7 +136,8 @@ class ClientControllerTest {
     }
 
     @Test
-    void missingEmailAsCreatingClient_ThenTriggeringConstrainViolation() throws Exception {
+    @DisplayName("MethodArgumentNotValidException resolved")
+    void clientDtoMissingEmail_ThenTriggeringMethodArgumentNotValidException() throws Exception {
         //arrange
         ClientDto clientDto = new ClientDto();
         clientDto.setName("mike");
@@ -131,7 +150,8 @@ class ClientControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(HttpStatus.BAD_REQUEST.name()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.timeStamp").exists());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.timeStamp").exists())
+                .andDo(print());
     }
 
     @Test
@@ -143,8 +163,9 @@ class ClientControllerTest {
         )
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(Matchers.is(HttpStatus.BAD_REQUEST.name())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(is("Http message is not readable")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value(Matchers.containsString("Required request body is missing")));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(containsString("Http message is not readable")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value(Matchers.containsString("Required request body is missing")))
+                .andDo(print());
     }
 
 }
