@@ -1,6 +1,7 @@
 package com.ynz.demo.containerizedapp.repository;
 
 
+import com.ynz.demo.containerizedapp.AbstractUsingTestContainers;
 import com.ynz.demo.containerizedapp.domain.Client;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -8,14 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
+import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.sql.DataSource;
-
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,12 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
+@Sql("classpath:client_order_test_data.sql")
 @Slf4j
-public class TestClientRepoUsingTestContainers {
-
-    @Container
-    static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:13")
-            .withDatabaseName("postgres").withPassword("test").withUsername("postgres");
+public class TestClientRepoUsingTestContainers extends AbstractUsingTestContainers {
 
     @Autowired
     private DataSource dataSource;
@@ -43,13 +37,6 @@ public class TestClientRepoUsingTestContainers {
 
     @Autowired
     private ClientRepository clientRepository;
-
-    //>=SpringBoot 2.2.6, it allows dynamically modify the application property values
-    @DynamicPropertySource
-    static void setPostgreSQLProperties(DynamicPropertyRegistry dynamicPropertyRegistry) {
-        log.info("dynamic generated jdbcUrl: {}", postgreSQLContainer.getJdbcUrl());
-        dynamicPropertyRegistry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
-    }
 
     @Test
     void isPostgreSQLContainerReady() {
@@ -85,21 +72,21 @@ public class TestClientRepoUsingTestContainers {
 
     @Test
     void findClientFromTestContainerDb() {
-        //arrange
-        Client client = new Client();
-        client.setName("Mike");
-        client.setEmail("mike@gmail.com");
-
-        testEntityManager.persist(client);
 
         //act
-        Optional<Client> found = clientRepository.findByEmail("mike@gmail.com", Client.class);
+        Optional<Client> found = clientRepository.findByEmail("ynz@hotmail.com", Client.class);
 
         //assure
         assertAll(
                 () -> assertTrue(found.isPresent()),
-                () -> assertThat(found.get().getName(), is("Mike"))
+                () -> assertThat(found.get().getName(), is("ynz"))
         );
+    }
+
+    @Test
+    void testPopulatingData() {
+        Optional<Client> found = clientRepository.findById(1);
+        assertTrue(found.isPresent());
     }
 
 }

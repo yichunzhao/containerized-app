@@ -1,5 +1,6 @@
 package com.ynz.demo.containerizedapp.repository;
 
+import com.ynz.demo.containerizedapp.AbstractUsingTestContainers;
 import com.ynz.demo.containerizedapp.domain.Client;
 import com.ynz.demo.containerizedapp.domain.Order;
 import com.ynz.demo.containerizedapp.dto.projection.ClientInfo;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.jdbc.Sql;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Testcontainers
 @Sql("classpath:client_order_test_data.sql")
-class ClientRepositoryTest {
+class ClientRepositoryTest extends AbstractUsingTestContainers {
     @Autowired
     private ClientRepository clientRepository;
 
