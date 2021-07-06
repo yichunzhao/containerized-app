@@ -357,3 +357,36 @@ the best practices of REST API error handling:
 
 While the details of error handling will vary by application, these general principles apply to nearly all REST APIs and should be adhered to when possible.
 
+**Testcontainers**
+
+Testcontainers is a Java library that supports JUnit tests, providing lightweight, throwaway instances of common databases, Selenium web browsers, or anything else that can run in a Docker container.
+
+While TestContainers is tightly couples with the Junit4 rule API, this moudle provides an API that is based on the JUnit Jupiter extension model. 
+
+* Data access layer integration tests: use a containerized instance of a MySQL, PostgreSQL or Oracle database to test your data access layer code for complete compatibility, but without requiring complex setup on developers' machines and safe in the knowledge that your tests will always start with a known DB state. Any other database type that can be containerized can also be used.
+* Application integration tests: for running your application in a short-lived test mode with dependencies, such as databases, message queues or web servers.
+* UI/Acceptance tests: use containerized web browsers, compatible with Selenium, for conducting automated UI tests. Each test can get a fresh instance of the browser, with no browser state, plugin variations or automated browser upgrades to worry about. And you get a video recording of each test session, or just each session where tests failed.
+
+Jupiter integration is provided by means of the @Testcontainers annotation.
+
+You might want to use Testcontainers' database support:
+
+Instead of H2 database for DAO unit tests that doesn't emulate all database features. Testcontainers is not as performant as H2, but it runs a real DB inside of a container.
+Instead of a database running on the local machine or in a VM for DAO unit tests or end-to-end integration tests that need a database to be present. In this context, the benefit of Testcontainers is that the database always starts in a known state, without any contamination between test runs or on developers' local machines.
+
+     <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>1.15.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>1.15.3</version>
+            <scope>test</scope>
+        </dependency>
+
+The first one is for the PostgreSQL container and the second one is for JUnit 5 support.
+
