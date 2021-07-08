@@ -403,3 +403,19 @@ And it allows to inlcude a BOM, a dependency management block, thus automaticall
     </dependencyManagement>
 ````
 
+Annotations as using TestContainers
+
+@Testcontainers
+It is a class annotation. is a JUnit Jupiter extension to activate automatic startup and stop of containers used in a test case. It links TestContainer and Junit5, and therefor they may work together. 
+
+@DynamicPropertySource
+@DynamicPropertySource is a method-level annotation that you can use to register dynamic properties to be added to the set of PropertySources in the Environment for an ApplicationContext loaded for an integration test. Dynamic properties are useful when you do not know the value of the properties upfront – for example, if the properties are managed by an external resource such as for a container managed by the Testcontainers project. We don't exaclty know the database port number, for it will be given randomly, so we have to make a callback method to reset the application property, here the jdbc:url.
+
+````
+    //>=SpringBoot 2.2.6, it allows dynamically modify the application property values
+    @DynamicPropertySource
+    protected static void setPostgreSQLProperties(DynamicPropertyRegistry dynamicPropertyRegistry) {
+        dynamicPropertyRegistry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+    }
+````
+issue: @Sql doesn't populating db as using with @SpringBootTest
