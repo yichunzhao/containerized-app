@@ -5,6 +5,7 @@ import com.ynz.demo.containerizedapp.dto.OrderDto;
 import com.ynz.demo.containerizedapp.dto.projection.ClientInfo;
 import com.ynz.demo.containerizedapp.service.ClientService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,11 +28,13 @@ import java.util.List;
 @RequestMapping("client")
 @RequiredArgsConstructor
 @Validated
+@Slf4j
 public class ClientController {
     private final ClientService clientService;
 
     @PostMapping
     public ResponseEntity<ClientDto> createNewClient(@Valid @RequestBody ClientDto clientDto, HttpServletRequest request) {
+        log.info("Creating a new Client");
         ClientDto created = clientService.createNewClient(clientDto);
         URI uri = ServletUriComponentsBuilder.fromRequestUri(request).pathSegment("{email}").buildAndExpand(created.getEmail()).encode().toUri();
         return ResponseEntity.created(uri).body(created);
@@ -39,17 +42,20 @@ public class ClientController {
 
     @GetMapping("{email}")
     public ResponseEntity<ClientInfo> getClientByEmail(@PathVariable("email") @Email @NotBlank String email) {
+        log.info("Finding a Client by his email");
         return ResponseEntity.status(HttpStatus.FOUND).body(clientService.findClientByEmail(email));
     }
 
     @PostMapping("{email}/orders")
     public ResponseEntity<OrderDto> createClientOrder(@PathVariable("email") @Email @NotBlank String clientEmail, @RequestBody OrderDto orderDto) {
+        log.info("Associating an order with a Client by his email");
         OrderDto createdOrderDto = clientService.createClientOrder(clientEmail, orderDto);
         return ResponseEntity.ok(createdOrderDto);
     }
 
     @GetMapping("{email}/orders")
     public ResponseEntity<List<OrderDto>> getClientOrders(@PathVariable("email") @Email @NotBlank String clientEmail) {
+        log.info("Finding a Client's orders by his email");
         return ResponseEntity.status(HttpStatus.FOUND).body(clientService.findClientOrders(clientEmail));
     }
 

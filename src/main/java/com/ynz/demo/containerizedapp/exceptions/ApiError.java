@@ -1,6 +1,7 @@
 package com.ynz.demo.containerizedapp.exceptions;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 import java.time.OffsetDateTime;
@@ -14,6 +15,7 @@ import java.util.List;
  */
 
 @Getter
+@NoArgsConstructor
 public class ApiError {
     private HttpStatus status;
     private String message;
