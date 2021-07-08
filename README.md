@@ -359,9 +359,7 @@ While the details of error handling will vary by application, these general prin
 
 **Testcontainers**
 
-Testcontainers is a Java library that supports JUnit tests, providing lightweight, throwaway instances of common databases, Selenium web browsers, or anything else that can run in a Docker container.
-
-While TestContainers is tightly couples with the Junit4 rule API, this moudle provides an API that is based on the JUnit Jupiter extension model. 
+Testcontainers is a Java library that supports JUnit tests, providing lightweight, throwaway instances of common databases, Selenium web browsers, or anything else that can run in a Docker container. While TestContainers is tightly couples with the Junit4 rule API, this moudle provides an API that is based on the JUnit Jupiter extension model. 
 
 * Data access layer integration tests: use a containerized instance of a MySQL, PostgreSQL or Oracle database to test your data access layer code for complete compatibility, but without requiring complex setup on developers' machines and safe in the knowledge that your tests will always start with a known DB state. Any other database type that can be containerized can also be used.
 * Application integration tests: for running your application in a short-lived test mode with dependencies, such as databases, message queues or web servers.
@@ -371,9 +369,10 @@ Jupiter integration is provided by means of the @Testcontainers annotation.
 
 You might want to use Testcontainers' database support:
 
-Instead of H2 database for DAO unit tests that doesn't emulate all database features. Testcontainers is not as performant as H2, but it runs a real DB inside of a container.
-Instead of a database running on the local machine or in a VM for DAO unit tests or end-to-end integration tests that need a database to be present. In this context, the benefit of Testcontainers is that the database always starts in a known state, without any contamination between test runs or on developers' local machines.
+Testcontainers is not as performant as H2, but it runs a real DB inside of a container. Instead of a database running on the local machine or in a VM for DAO unit tests or end-to-end integration tests that need a database to be present. In this context, the benefit of Testcontainers is that the database always starts in a known state, without any contamination between test runs or on developers'local machines.
 
+Maven dependencies: The first one is for the PostgreSQL container and the second one is for JUnit 5 support.
+````
      <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
@@ -387,6 +386,36 @@ Instead of a database running on the local machine or in a VM for DAO unit tests
             <version>1.15.3</version>
             <scope>test</scope>
         </dependency>
+````
+And it allows to inlcude a BOM, a dependency management block, thus automatically managing versions of dependencies.  
 
-The first one is for the PostgreSQL container and the second one is for JUnit 5 support.
+````
+    <dependencyManagement>
+        <dependencies>
+            <!-- https://mvnrepository.com/artifact/org.testcontainers/testcontainers-bom -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+````
 
+Annotations as using TestContainers
+
+@Testcontainers
+It is a class annotation. is a JUnit Jupiter extension to activate automatic startup and stop of containers used in a test case. It links TestContainer and Junit5, and therefor they may work together. 
+
+@DynamicPropertySource
+@DynamicPropertySource is a method-level annotation that you can use to register dynamic properties to be added to the set of PropertySources in the Environment for an ApplicationContext loaded for an integration test. Dynamic properties are useful when you do not know the value of the properties upfront – for example, if the properties are managed by an external resource such as for a container managed by the Testcontainers project. We don't exaclty know the database port number, for it will be given randomly, so we have to make a callback method to reset the application property, here the jdbc:url.
+
+````
+    //>=SpringBoot 2.2.6, it allows dynamically modify the application property values
+    @DynamicPropertySource
+    protected static void setPostgreSQLProperties(DynamicPropertyRegistry dynamicPropertyRegistry) {
+        dynamicPropertyRegistry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+    }
+````
+issue: @Sql doesn't populating db as using with @SpringBootTest
