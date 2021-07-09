@@ -398,10 +398,17 @@ And it allows to inlcude a BOM, a dependency management block, thus automaticall
                 <artifactId>testcontainers-bom</artifactId>
                 <version>${testcontainers.version}</version>
                 <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
 ````
+
+Note: BOM is an external POM that can be reused accross projects. Without scope _import_, it will cause errors missing version. The _import_ scope was added in Maven 2.0.9 and it's only available for the dependency type pom. _import_ indicates that this dependency should be replaced with all effective dependencies declared in it's POM. 
+
+> [ERROR]   The project com.ynz.demo:containerized-app:0.0.1-SNAPSHOT (C:\Users\zhaoy\IdeaProjects\containerized-app\pom.xml) has 2 errors
+> [ERROR]     'dependencies.dependency.version' for org.testcontainers:postgresql:jar is missing. @ line 85, column 21
+> [ERROR]     'dependencies.dependency.version' for org.testcontainers:junit-jupiter:jar is missing. @ line 91, column 21
 
 Annotations as using TestContainers
 
@@ -419,3 +426,10 @@ It is a class annotation. is a JUnit Jupiter extension to activate automatic sta
     }
 ````
 issue: @Sql doesn't populating db as using with @SpringBootTest
+
+**SpringBoot test**
+
+@ContextConfiguration
+@ContextConfiguration defines class-level metadata that is used to determine how to load and configure an ApplicationContext for integration tests. Specifically, @ContextConfiguration declares the application context resource locations or the component classes used to load the context.
+
+Resource locations are typically XML configuration files or Groovy scripts located in the classpath, while component classes are typically @Configuration classes. However, resource locations can also refer to files and scripts in the file system, and component classes can be @Component classes, @Service classes, and so on.
