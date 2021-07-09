@@ -18,20 +18,20 @@ import java.util.List;
 @NoArgsConstructor
 public class ApiError {
     private HttpStatus status;
-    private String message;
+    private String title;
     private List<String> errors;
     private OffsetDateTime timeStamp;
 
-    public ApiError(HttpStatus status, String message, List<String> errors) {
+    public ApiError(HttpStatus status, String title, List<String> errors) {
         this.status = status;
-        this.message = message;
+        this.title = title;
         this.errors = errors;
         this.timeStamp = OffsetDateTime.now();
     }
 
-    public ApiError(HttpStatus status, String message, String error) {
+    public ApiError(HttpStatus status, String title, String error) {
         this.status = status;
-        this.message = message;
+        this.title = title;
         this.errors = Arrays.asList(error);
         this.timeStamp = OffsetDateTime.now();
     }

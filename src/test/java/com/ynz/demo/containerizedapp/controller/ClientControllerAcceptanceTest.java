@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -33,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = {"server.port=8081"})
 @Testcontainers(disabledWithoutDocker = true)
+//@Sql("classpath:client_order_test_data.sql")
 @Slf4j
 public class ClientControllerAcceptanceTest {
     private static final String CLIENTS_URL = "client";
@@ -70,14 +70,14 @@ public class ClientControllerAcceptanceTest {
     @Test
     void findClientInFreshDbByEmail_ThenReturnStatusNotFound() {
         URI uri = UriComponentsBuilder.newInstance().scheme("http").host("localhost").port(testServerPort).path(CLIENTS_URL)
-                .pathSegment("{email}").buildAndExpand("ynz@hotmail.com").toUri();
+                .pathSegment("{email}").buildAndExpand("xxx@hotmail.com").toUri();
 
         ResponseEntity<ApiError> response = restTemplate.getForEntity(uri, ApiError.class);
         assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
     }
 
     @Test
-    @Sql("classpath:client_order_test_data.sql")
+    //@Sql("classpath:client_order_test_data.sql")
     @Transactional
     @Disabled("cannot populate db!")
     void findExistingClientInPopulatedDb_ThenReturnStatusFound() {
